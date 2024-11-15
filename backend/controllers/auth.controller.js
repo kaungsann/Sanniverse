@@ -15,7 +15,7 @@ export const signup = async (req, res) => {
     } = req.body;
 
     if (password !== confirmPassword) {
-      res.status(400).json({ error: "Password  don't match" });
+      return res.status(400).json({ error: "Password  don't match" });
     }
     const user = await User.findOne({ email });
     if (user) {
@@ -52,23 +52,26 @@ export const signup = async (req, res) => {
         profileImage: newUser.profileImage,
       });
     } else {
-      res.status(401).json({ error: "UserData is Invalid" });
+      return res.status(401).json({ error: "UserData is Invalid" });
     }
   } catch (error) {
     console.log("Error is SignIn Controller", error.message);
-    res.status(400).json({ error: "Internal Server Error" });
+    return res.status(400).json({ error: "Internal Server Error" });
   }
 };
 
 export const login = async (req, res) => {
   try {
     const { email, password } = req.body;
-    console.log("email is a", email);
+
+    console.log("email , password", email);
+    console.log("email , password", password);
+
     const user = await User.findOne({ email });
     // console.log("user is a", user);
     const isPasswordCorrect = bcrypt.compare(password, user.password || "");
     if (!user || !isPasswordCorrect) {
-      res.status(400).json({ error: "Invalid Credential" });
+      return res.status(400).json({ error: "Invalid Credential" });
     }
     generateTokenAndSetCookie(user._id, res);
 
@@ -83,7 +86,7 @@ export const login = async (req, res) => {
     });
   } catch (error) {
     console.log("Error is login Controller", error.message);
-    res.status(400).json({ error: "Internal Server Error" });
+    return res.status(400).json({ error: "Internal Server Error" });
   }
 };
 
